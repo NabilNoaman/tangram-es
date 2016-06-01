@@ -216,6 +216,9 @@ bool Label::update(const glm::mat4& _mvp, const glm::vec2& _screenSize, float _z
     // checks whether the label is out of the viewport
     if (offViewport(_screenSize)) {
         enterState(State::out_of_screen, 0.0);
+    } else if (m_state == State::out_of_screen) {
+        m_occludedLastFrame = true;
+        enterState(State::sleep, 0.0);
     }
 
     return true;
@@ -264,11 +267,6 @@ bool Label::evalState(const glm::vec2& _screenSize, float _dt) {
                 enterState(State::sleep, 0.0);
             }
             break;
-        case State::out_of_screen:
-            if (!offViewport(_screenSize)) {
-                enterState(State::wait_occ, 0.0);
-            }
-            break;
         case State::wait_occ:
             if (m_occluded) {
                 enterState(State::sleep, 0.0);
@@ -294,6 +292,7 @@ bool Label::evalState(const glm::vec2& _screenSize, float _dt) {
                 animate = true;
             }
             break;
+        case State::out_of_screen:
         case State::dead:
             break;
     }
