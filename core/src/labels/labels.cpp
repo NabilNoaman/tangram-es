@@ -359,7 +359,7 @@ void Labels::updateLabelSet(const View& _view, float _dt,
     }
 
     /// Apply repeat groups
-
+#if 0
     std::vector<Label*> repeatGroupSet;
     for (auto* label : m_labels) {
         if (label->isOccluded()) {
@@ -383,7 +383,7 @@ void Labels::updateLabelSet(const View& _view, float _dt,
     });
 
     checkRepeatGroups(repeatGroupSet);
-
+#endif
 
     /// Update label meshes
 
