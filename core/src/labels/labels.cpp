@@ -254,17 +254,15 @@ void Labels::updateLabelSet(const View& _view, float _dt,
     // Broad phase collision detection
     for (auto* label : m_labels) {
         m_aabbs.push_back(label->aabb());
-        m_aabbs.back().m_userData = (void*)label;
     }
 
     m_isect2d.intersect(m_aabbs);
 
     // Set the first item to be the one with higher priority
     for (auto& pair : m_isect2d.pairs) {
-        const auto& aabb1 = m_aabbs[pair.first];
-        const auto& aabb2 = m_aabbs[pair.second];
-        auto l1 = static_cast<Label*>(aabb1.m_userData);
-        auto l2 = static_cast<Label*>(aabb2.m_userData);
+        auto l1 = m_labels[pair.first];
+        auto l2 = m_labels[pair.second];
+
         if (l1->options().priority > l2->options().priority) {
             std::swap(pair.first, pair.second);
         }
@@ -273,19 +271,15 @@ void Labels::updateLabelSet(const View& _view, float _dt,
     // Sort by priority on the first item
     std::sort(m_isect2d.pairs.begin(), m_isect2d.pairs.end(),
               [&](auto& a, auto& b) {
-                  const auto& aabb1 = m_aabbs[a.first];
-                  const auto& aabb2 = m_aabbs[b.first];
-                  auto l1 = static_cast<Label*>(aabb1.m_userData);
-                  auto l2 = static_cast<Label*>(aabb2.m_userData);
+                  auto l1 = m_labels[a.first];;
+                  auto l2 = m_labels[b.first];;
                   if (l1->options().priority != l2->options().priority) {
                       // lower numeric priority means higher priority
                       return l1->options().priority > l2->options().priority;
                   }
 
-                  const auto& aabb3 = m_aabbs[a.second];
-                  const auto& aabb4 = m_aabbs[b.second];
-                  auto l3 = static_cast<Label*>(aabb3.m_userData);
-                  auto l4 = static_cast<Label*>(aabb4.m_userData);
+                  auto l3 = m_labels[a.second];
+                  auto l4 = m_labels[b.second];;
                   if (l3->options().priority != l4->options().priority) {
                       // lower numeric priority means higher priority
                       return l3->options().priority > l4->options().priority;
@@ -298,11 +292,9 @@ void Labels::updateLabelSet(const View& _view, float _dt,
 
     // Narrow Phase, resolve conflicts
     for (auto& pair : m_isect2d.pairs) {
-        const auto& aabb1 = m_aabbs[pair.first];
-        const auto& aabb2 = m_aabbs[pair.second];
 
-        auto l1 = static_cast<Label*>(aabb1.m_userData);
-        auto l2 = static_cast<Label*>(aabb2.m_userData);
+        auto l1 = m_labels[pair.first];
+        auto l2 = m_labels[pair.second];
 
         if (l1->isOccluded() || l2->isOccluded()) {
             // One of this pair is already occluded.
