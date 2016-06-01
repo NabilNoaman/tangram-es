@@ -139,6 +139,7 @@ public class MainActivity extends Activity implements OnMapReadyCallback, TapRes
 
             props = new HashMap<>();
             props.put("type", "point");
+            props.put("color", "#DFDF44");
             markers.addPoint(tappedPoint, props);
         }
 
