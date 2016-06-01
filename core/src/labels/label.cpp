@@ -92,22 +92,14 @@ bool Label::updateScreenTransform(const glm::mat4& _mvp, const glm::vec2& _scree
         }
     }
 
-    // update screen position
     glm::vec2 offset = m_options.offset;
 
-    if (m_transform.state.rotation != 0.f) {
-        offset = glm::rotate(offset, m_transform.state.rotation);
+    if ((offset.x != 0.f || offset.y != 0.f) && rot != 0.f) {
+        offset = glm::rotate(offset, rot);
     }
 
-    glm::vec2 newScreenPos = screenPosition + offset;
-    if (newScreenPos != m_transform.state.screenPos) {
-        m_transform.state.screenPos = newScreenPos;
-    }
-
-    // update screen rotation
-    if (m_transform.state.rotation != rot) {
-        m_transform.state.rotation = rot;
-    }
+    m_transform.state.screenPos = screenPosition + offset;
+    m_transform.state.rotation = rot;
 
     return true;
 }
